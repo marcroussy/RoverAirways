@@ -52,7 +52,13 @@ namespace Flights.Store
             var entities = await table.ExecuteQuerySegmentedAsync(query, token);
 
             return entities
-                .Select(entity => new Flight(entity.Id, entity.Departing, entity.Arriving, entity.Equipment))
+                .Select(entity => new Flight(
+                    entity.Id, 
+                    entity.Departing, 
+                    entity.Arriving, 
+                    entity.Equipment,
+                    entity.Scheduled,
+                    entity.Revised))
                 .ToImmutableList();
         }
     }

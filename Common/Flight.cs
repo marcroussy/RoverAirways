@@ -8,12 +8,16 @@ namespace Common
             int id, 
             string departing, 
             string arriving, 
-            string equipment)
+            string equipment,
+            DateTimeOffset scheduled, 
+            DateTimeOffset revised)
         {
             Id = id;
             Departing = departing;
             Arriving = arriving;
             Equipment = equipment;
+            Scheduled = scheduled;
+            Revised = revised;
         }
 
         public int Id { get; set; }

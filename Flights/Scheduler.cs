@@ -26,9 +26,25 @@ namespace Flights
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
-            var flight = new Flight((int)data.id, (string)data.departing, (string)data.arriving, (string)data.equipment);
+            var scheduled = DateTimeOffset.FromUnixTimeSeconds((long)data.scheduled);
+            var revised = DateTimeOffset.FromUnixTimeSeconds((long)data.revised);
 
-            await _store.Add(flight);
+            var flight = new Flight(
+                (int)data.id, 
+                (string)data.departing, 
+                (string)data.arriving, 
+                (string)data.equipment,
+                scheduled,
+                revised);
+
+            try
+            {
+                await _store.Add(flight);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex.Message);
+            }
 
             return
                 (ActionResult)new OkObjectResult($"Flight scheduled");
