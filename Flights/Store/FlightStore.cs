@@ -4,6 +4,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,57 +12,48 @@ namespace Flights.Store
 {
     public class FlightStore
     {
+        private readonly string storageAccountName;
+        private readonly string tableName;
+
         public FlightStore()
         {
+            storageAccountName = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
+            tableName = "RoverF";
         }
 
-        public Task Add(Flight flight)
+        public Task Add(Flight f)
         {
-            // Retrieve the storage account from the connection string.
-            var account = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(account);
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageAccountName);
 
-            // Create the table client.
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
-            // Create the CloudTable object that represents the "people" table.
-            CloudTable table = tableClient.GetTableReference("RoverF");
+            CloudTable table = tableClient.GetTableReference(tableName);
 
-            // Create a new customer entity.
-            FlightStoreEntity customer1 = new FlightStoreEntity(flight);
+            FlightStoreEntity flight = new FlightStoreEntity(f);
 
-            // Create the TableOperation object that inserts the customer entity.
-            TableOperation insertOperation = TableOperation.Insert(customer1);
+            TableOperation insertOperation = TableOperation.Insert(flight);
 
-            // Execute the insert operation.
             return table.ExecuteAsync(insertOperation);
         }
 
         public async Task<ImmutableList<Flight>> Get()
         {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(storageAccountName);
 
-            // Retrieve the storage account from the connection string.
-            var account = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(account);
-
-            // Create the table client.
             CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
 
-            // Create the CloudTable object that represents the "people" table.
-            CloudTable table = tableClient.GetTableReference("RoverF");
+            CloudTable table = tableClient.GetTableReference(tableName);
 
-            // Construct the query operation for all customer entities where PartitionKey="Smith".
-            TableQuery<FlightStoreEntity> query = new TableQuery<FlightStoreEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "All"));
+            TableQuery<FlightStoreEntity> query = new TableQuery<FlightStoreEntity>()
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "All"));
 
             var token = new TableContinuationToken();
+
             var entities = await table.ExecuteQuerySegmentedAsync(query, token);
 
-            var list = new List<Flight>();
-            foreach (var entity in entities)
-            {
-                list.Add(new Flight(entity.Id, entity.Departing, entity.Arriving, entity.Equipment));
-            }
-            return list.ToImmutableList();
+            return entities
+                .Select(entity => new Flight(entity.Id, entity.Departing, entity.Arriving, entity.Equipment))
+                .ToImmutableList();
         }
     }
 }
