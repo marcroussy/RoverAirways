@@ -41,7 +41,7 @@ namespace Flights
         public class ValidationsComplete
         {
             public bool Succesful { get; set; }
-            public List<int> FlightIds { get; set; }
+            public IEnumerable<int> FlightIds { get; set; }
         }
     }
 }
