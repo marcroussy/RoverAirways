@@ -1,0 +1,111 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "flightNo",
+    "departing",
+    "arriving",
+    "codeshares",
+    "tailnumber",
+    "scheduled",
+    "revised"
+  ],
+  "properties": {
+    "flightNo": {
+      "$id": "#/properties/flightNo",
+      "type": "string",
+      "title": "The Flightno Schema",
+      "default": "",
+      "examples": [
+        "456"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "departing": {
+      "$id": "#/properties/departing",
+      "type": "string",
+      "title": "The Departing Schema",
+      "default": "",
+      "examples": [
+        "cyul"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "arriving": {
+      "$id": "#/properties/arriving",
+      "type": "string",
+      "title": "The Arriving Schema",
+      "default": "",
+      "examples": [
+        "klax"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "codeshares": {
+      "$id": "#/properties/codeshares",
+      "type": "array",
+      "title": "The Codeshares Schema",
+      "items": {
+        "$id": "#/properties/codeshares/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "partner",
+          "flightNumber"
+        ],
+        "properties": {
+          "partner": {
+            "$id": "#/properties/codeshares/items/properties/partner",
+            "type": "string",
+            "title": "The Partner Schema",
+            "default": "",
+            "examples": [
+              "delta"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "flightNumber": {
+            "$id": "#/properties/codeshares/items/properties/flightNumber",
+            "type": "integer",
+            "title": "The Flightnumber Schema",
+            "default": 0,
+            "examples": [
+              123
+            ]
+          }
+        }
+      }
+    },
+    "tailnumber": {
+      "$id": "#/properties/tailnumber",
+      "type": "string",
+      "title": "The Tailnumber Schema",
+      "default": "",
+      "examples": [
+        "N74656"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "scheduled": {
+      "$id": "#/properties/scheduled",
+      "type": "integer",
+      "title": "The Scheduled Schema",
+      "default": 0,
+      "examples": [
+        1553559808
+      ]
+    },
+    "revised": {
+      "$id": "#/properties/revised",
+      "type": "integer",
+      "title": "The Revised Schema",
+      "default": 0,
+      "examples": [
+        1553559808
+      ]
+    }
+  }
+}

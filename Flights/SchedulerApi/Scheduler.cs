@@ -12,6 +12,8 @@ using Common;
 using Flights.Store;
 using Common.HttpHelpers;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Schema;
+using System.Collections.Generic;
 
 namespace Flights
 {
@@ -22,30 +24,28 @@ namespace Flights
         [FunctionName("Scheduler")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
+            [Blob("schemas/SchedulerSchema.json", FileAccess.Read)] Stream validationSchema,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
             try
             {
+                string schemaJson = await new StreamReader(validationSchema).ReadToEndAsync();
+                JSchema parsedSchema = JSchema.Parse(schemaJson);
+
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                if (!IsValid(requestBody))
+                var parsedRequest = JObject.Parse(requestBody);
+
+                IList<string> errorMessages = new List<string>();
+                bool validRequest = parsedRequest.IsValid(parsedSchema, out errorMessages);
+
+                if (!validRequest)
                 {
-                    return new BadRequestObjectResult(requestBody);
+                    return new BadRequestObjectResult(errorMessages);
                 }
 
-                dynamic data = JsonConvert.DeserializeObject(requestBody);
-
-                var scheduled = DateTimeOffset.FromUnixTimeSeconds((long)data.scheduled);
-                var revised = DateTimeOffset.FromUnixTimeSeconds((long)data.revised);
-
-                var flight = new Flight(
-                    (int)data.id,
-                    (string)data.departing,
-                    (string)data.arriving,
-                    (string)data.equipment,
-                    scheduled,
-                    revised);
+                var flight = parsedRequest.ToObject<Flight>();
 
                 await _store.Add(flight);
 
