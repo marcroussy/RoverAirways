@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Flights", "Flights\Flights.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{3BD3C085-A8A8-4969-AB52-BF4FEEF01090}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Planes", "Planes\Planes.csproj", "{DE7A3F8E-2119-4411-97AE-5FDA3D5D6E55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Planes", "Planes\Planes.csproj", "{DE7A3F8E-2119-4411-97AE-5FDA3D5D6E55}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BBC8A544-3D35-4D50-864B-2C8AD2A6FC38}"
+	ProjectSection(SolutionItems) = preProject
+		SchedulerSchema.json = SchedulerSchema.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

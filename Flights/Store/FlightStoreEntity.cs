@@ -17,7 +17,6 @@ namespace Flights.Store
             Id = flight.Id;
             Departing = flight.Departing;
             Arriving = flight.Arriving;
-            Equipment = flight.Equipment;
             Scheduled = flight.Scheduled;
             Revised = flight.Revised;
             this.PartitionKey = "All";
@@ -28,7 +27,7 @@ namespace Flights.Store
         public string Departing { get; set; }
         public string Arriving { get; set; }
         public string Equipment { get; set; }
-        public DateTimeOffset Scheduled { get; set; }
-        public DateTimeOffset Revised { get; set; }
+        public long Scheduled { get; set; }
+        public long Revised { get; set; }
     }
 }
