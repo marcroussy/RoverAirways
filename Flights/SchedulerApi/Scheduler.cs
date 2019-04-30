@@ -21,6 +21,7 @@ namespace Flights
     {
         private static FlightStore _store = new FlightStore();
 
+        [return: Queue("flightscheduled")]
         [FunctionName("Scheduler")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
