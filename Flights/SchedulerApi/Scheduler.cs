@@ -21,11 +21,11 @@ namespace Flights
     {
         private static FlightStore _store = new FlightStore();
 
-        [return: Queue("flightscheduled")]
         [FunctionName("Scheduler")]
         public static async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             [Blob("schemas/SchedulerSchema.json", FileAccess.Read)] Stream validationSchema,
+            [Queue("flightscheduled")]ICollector<Flight> queueCollector,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -49,6 +49,8 @@ namespace Flights
                 var flight = parsedRequest.ToObject<Flight>();
 
                 await _store.Add(flight);
+
+                queueCollector.Add(flight);
 
                 return (ActionResult)new OkObjectResult(flight);
             }
