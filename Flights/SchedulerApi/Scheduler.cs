@@ -19,7 +19,7 @@ namespace Flights
 {
     public class Scheduler
     {
-        private static FlightStore _store = new FlightStore();
+        private readonly FlightStore _store = new FlightStore();
 
         public Scheduler(FlightStore store)
         {

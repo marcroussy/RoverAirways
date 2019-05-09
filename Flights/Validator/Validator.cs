@@ -12,16 +12,19 @@ using Microsoft.Extensions.Logging;
 namespace Flights
 {
     [StorageAccount("AzureWebJobsStorage")]
-    public static class Validator
+    public class Validator
     {
-        private static FlightStore _store = new FlightStore();
+        private readonly FlightStore _store;
+
+        public Validator(FlightStore store)
+        {
+            _store = store;
+        }
 
         [return: Queue("validationscompleted")]
         [FunctionName("Validator")]
-        public static async Task<ValidationsComplete> Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task<ValidationsComplete> Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
             var flights = await _store.Get();
 
             if (flights.IsEmpty)
