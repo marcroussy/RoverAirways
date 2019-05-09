@@ -17,12 +17,17 @@ using System.Collections.Generic;
 
 namespace Flights
 {
-    public static class Scheduler
+    public class Scheduler
     {
         private static FlightStore _store = new FlightStore();
 
+        public Scheduler(FlightStore store)
+        {
+            _store = store;
+        }
+
         [FunctionName("Scheduler")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             [Blob("schemas/SchedulerSchema.json", FileAccess.Read)] Stream validationSchema,
             [Queue("flightscheduled")]ICollector<Flight> queueCollector,
