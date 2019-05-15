@@ -4,13 +4,14 @@ using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Flights.Store
 {
-    public class FlightStore
+    public class FlightStore : IFlightStore
     {
         private readonly string storageAccountName;
         private readonly string tableName;
@@ -19,6 +20,7 @@ namespace Flights.Store
         {
             storageAccountName = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
             tableName = "RoverF";
+            Debug.WriteLine("Instantiated FlightStore");
         }
 
         public Task Add(Flight f)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Flights.Services;
 using Flights.Store;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -14,11 +15,12 @@ namespace Flights
     [StorageAccount("AzureWebJobsStorage")]
     public class Validator
     {
-        private readonly FlightStore _store;
-
-        public Validator(FlightStore store)
+        private readonly IFlightStore _store;
+        private readonly IWarningGenerator _warnings;
+        public Validator(IFlightStore store, IWarningGenerator warnings)
         {
             _store = store;
+            _warnings = warnings;
         }
 
         [return: Queue("validationscompleted")]
@@ -34,12 +36,17 @@ namespace Flights
 
             foreach (var flight in flights)
             {
-                // Perform some random validation for now
+                if (flight.Revised <= flight.Scheduled)
+                {
+                    _warnings.Send();        
+                }
                 log.LogInformation($"Flight {flight.Id} is valid.");
             }
 
             return new ValidationsComplete() {FlightIds = flights.Select(f => f.Id).ToList() , Succesful = true  } ;
         }
+
+
 
         public class ValidationsComplete
         {

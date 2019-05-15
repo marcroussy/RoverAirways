@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Flights.Services;
 using Flights.Store;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,9 @@ namespace Flights
             // Register IGlobalIdProvider as singleton.
             // A single instance will be created and reused
             // with every service request
-            builder.Services.AddSingleton<FlightStore>();
+            builder.Services.AddSingleton<IFlightStore, FlightStore>();
+
+            builder.Services.AddSingleton<IWarningGenerator, EmailWarningGenerator>();
 
         }
     }
