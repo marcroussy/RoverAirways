@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
+using Flights.Services;
 using Flights.Store;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -12,16 +13,20 @@ using Microsoft.Extensions.Logging;
 namespace Flights
 {
     [StorageAccount("AzureWebJobsStorage")]
-    public static class Validator
+    public class Validator
     {
-        private static FlightStore _store = new FlightStore();
+        private readonly IFlightStore _store;
+        private readonly IWarningGenerator _warnings;
+        public Validator(IFlightStore store, IWarningGenerator warnings)
+        {
+            _store = store;
+            _warnings = warnings;
+        }
 
         [return: Queue("validationscompleted")]
         [FunctionName("Validator")]
-        public static async Task<ValidationsComplete> Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task<ValidationsComplete> Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
-
             var flights = await _store.Get();
 
             if (flights.IsEmpty)
@@ -31,12 +36,17 @@ namespace Flights
 
             foreach (var flight in flights)
             {
-                // Perform some random validation for now
+                if (flight.Revised <= flight.Scheduled)
+                {
+                    _warnings.Send();        
+                }
                 log.LogInformation($"Flight {flight.Id} is valid.");
             }
 
             return new ValidationsComplete() {FlightIds = flights.Select(f => f.Id).ToList() , Succesful = true  } ;
         }
+
+
 
         public class ValidationsComplete
         {
