@@ -21,6 +21,12 @@ namespace Flights.Tests
         private Mock<ILogger> _mockLogger;
         private Mock<IWarningGenerator> _mockWarnings;
 
+        // Points of interest: 
+        //   much easier to do thanks to injection
+        //   can check results of output of function
+        //   otherwise need to depend on mocks, which isn't great as it relies on implementation details
+        //   mocking the TimerInfo object
+
         [TestInitialize]
         public void Init()
         {
@@ -31,7 +37,7 @@ namespace Flights.Tests
         }
 
         [TestMethod]
-        public void GivenRevisedTime_EarlierThanScheduled_LogWarning()
+        public async Task GivenRevisedTime_EarlierThanScheduled_LogWarning()
         {
             var mockTime = new Mock<TimerSchedule>();
             var timer = new TimerInfo(mockTime.Object, new ScheduleStatus(), true);
@@ -42,7 +48,7 @@ namespace Flights.Tests
             _mockWarnings
                 .Setup(w => w.Send());
 
-            _sut.Run(timer, _mockLogger.Object);
+            var validFlights = await _sut.Run(timer, _mockLogger.Object);
 
             _mockWarnings
                 .Verify(w => w.Send());
@@ -56,7 +62,6 @@ namespace Flights.Tests
                      1, 
                      DateTimeOffset.UtcNow.ToString(), 
                      DateTimeOffset.UtcNow.ToString(),
-                     "Airbus A380",
                      1000,
                      999)
             }.ToImmutableList();

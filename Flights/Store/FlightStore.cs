@@ -58,7 +58,6 @@ namespace Flights.Store
                     entity.Id, 
                     entity.Departing, 
                     entity.Arriving, 
-                    entity.Equipment,
                     entity.Scheduled,
                     entity.Revised))
                 .ToImmutableList();

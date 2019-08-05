@@ -16,11 +16,10 @@ namespace Flights
     public class Validator
     {
         private readonly IFlightStore _store;
-        private readonly IWarningGenerator _warnings;
-        public Validator(IFlightStore store, IWarningGenerator warnings)
+
+        public Validator(IFlightStore store)
         {
             _store = store;
-            _warnings = warnings;
         }
 
         [return: Queue("validationscompleted")]
@@ -31,27 +30,39 @@ namespace Flights
 
             if (flights.IsEmpty)
             {
-                log.LogInformation($"No flights scheduled.");
+                log.LogInformation($"No flights to validate.");
+                return null;
             }
+
+            var validFlights = new List<int>();
+            var invalidFlights = new List<int>();
 
             foreach (var flight in flights)
             {
                 if (flight.Revised <= flight.Scheduled)
                 {
-                    _warnings.Send();        
+                    invalidFlights.Add(flight.Id);
                 }
-                log.LogInformation($"Flight {flight.Id} is valid.");
+                if (flight.Departing == flight.Arriving)
+                {
+                    invalidFlights.Add(flight.Id);
+                }
+
+                if (invalidFlights.IndexOf(flight.Id) == 0)
+                {
+                    validFlights.Add(flight.Id);
+                }
             }
 
-            return new ValidationsComplete() {FlightIds = flights.Select(f => f.Id).ToList() , Succesful = true  } ;
+            return new ValidationsComplete() { ValidFlightIds = validFlights, InvalidFlightIds = invalidFlights };
         }
 
 
 
         public class ValidationsComplete
         {
-            public bool Succesful { get; set; }
-            public IEnumerable<int> FlightIds { get; set; }
+            public IEnumerable<int> ValidFlightIds { get; set; }
+            public IEnumerable<int> InvalidFlightIds { get; set; }
         }
     }
 }
