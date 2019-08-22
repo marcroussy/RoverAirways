@@ -16,14 +16,14 @@ namespace Common
             long scheduled,
             long revised)
         {
-            Id = id;
+            FlightNo = id;
             Departing = departing;
             Arriving = arriving;
             Scheduled = scheduled;
             Revised = revised;
         }
 
-        public int Id { get; set; }
+        public int FlightNo { get; set; }
         public string Departing { get; set; }
         public string Arriving { get; set; }
         public string TailNumber { get; set; }

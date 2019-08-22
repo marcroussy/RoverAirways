@@ -14,7 +14,7 @@ namespace Flights.Store
 
         public FlightStoreEntity(Flight flight)
         {
-            Id = flight.Id;
+            Id = flight.FlightNo;
             Departing = flight.Departing;
             Arriving = flight.Arriving;
             Scheduled = flight.Scheduled;

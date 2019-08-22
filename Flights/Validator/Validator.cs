@@ -40,16 +40,16 @@ namespace Flights
             {
                 if (flight.Revised <= flight.Scheduled)
                 {
-                    invalidFlights.Add(flight.Id);
+                    invalidFlights.Add(flight.FlightNo);
                 }
                 if (flight.Departing == flight.Arriving)
                 {
-                    invalidFlights.Add(flight.Id);
+                    invalidFlights.Add(flight.FlightNo);
                 }
 
-                if (invalidFlights.IndexOf(flight.Id) == 0)
+                if (invalidFlights.IndexOf(flight.FlightNo) == 0)
                 {
-                    validFlights.Add(flight.Id);
+                    validFlights.Add(flight.FlightNo);
                 }
             }
 

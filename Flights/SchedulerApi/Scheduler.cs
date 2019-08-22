@@ -57,13 +57,13 @@ namespace Flights
 
                 queueCollector.Add(flight);
 
-                return (ActionResult)new OkObjectResult(flight);
+                return new OkObjectResult(flight);
             }
             catch (Exception ex)
             {
                 log.LogError(ex.Message);
 
-                return (ActionResult)new InternalServerErrorObjectResult();
+                return new InternalServerErrorObjectResult();
             }
 
         }
