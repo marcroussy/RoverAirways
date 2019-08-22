@@ -19,9 +19,9 @@ namespace Flights
 {
     public class Scheduler
     {
-        private readonly FlightStore _store = new FlightStore();
+        private readonly IFlightStore _store;
 
-        public Scheduler(FlightStore store)
+        public Scheduler(IFlightStore store)
         {
             _store = store;
         }
