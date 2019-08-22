@@ -28,9 +28,9 @@ namespace Flights
 
         [FunctionName(FunctionName.Scheduler)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-            [Blob("schemas/SchedulerSchema.json", FileAccess.Read)] Stream validationSchema,
-            [Queue("flightscheduled")]ICollector<Flight> queueCollector,
+            [HttpTrigger(AuthorizationLevel.Function, HttpTriggerMethod.Post, Route = null)] HttpRequest req,
+            [Blob(BindingParameter.SchedulerBlobSchema, FileAccess.Read)] Stream validationSchema,
+            [Queue(BindingParameter.ScheduledFlightQueue)]ICollector<Flight> queueCollector,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");

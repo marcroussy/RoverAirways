@@ -21,9 +21,9 @@ namespace Flights
             _store = store;
         }
 
-        [return: Queue("validationscompleted")]
+        [return: Queue(BindingParameter.ValidationCompletedQueue)]
         [FunctionName(FunctionName.Validator)]
-        public async Task<ValidationsComplete> Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
+        public async Task<ValidationsComplete> Run([TimerTrigger(BindingParameter.ValidationTimer)]TimerInfo myTimer, ILogger log)
         {
             var flights = await _store.Get();
 

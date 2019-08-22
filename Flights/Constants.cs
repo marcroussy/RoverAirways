@@ -14,4 +14,19 @@ namespace Flights
     {
         public const string AzureWebJobsStorage = "AzureWebJobsStorage";
     }
+
+    public static class HttpTriggerMethod
+    {
+        public const string Get = "get";
+        public const string Post = "post";
+    }
+
+    public static class BindingParameter
+    {
+        public const string ScheduledFlightQueue = "flightscheduled";
+        public const string ValidationCompletedQueue = "validationscompleted";
+        public const string SchedulerBlobSchema = "schemas/SchedulerSchema.json";
+        public const string ValidationTimer = "0 */1 * * * *";
+    }
+
 }
