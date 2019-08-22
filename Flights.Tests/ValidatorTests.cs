@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Common;
 using Flights.Store;
-using Flights.Services;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Timers;
 using Microsoft.Extensions.Logging;
