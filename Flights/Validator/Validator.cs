@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Flights
 {
-    [StorageAccount("AzureWebJobsStorage")]
+    [StorageAccount(ConfigurationSetting.AzureWebJobsStorage)]
     public class Validator
     {
         private readonly IFlightStore _store;
@@ -23,7 +23,7 @@ namespace Flights
         }
 
         [return: Queue("validationscompleted")]
-        [FunctionName("Validator")]
+        [FunctionName(FunctionName.Validator)]
         public async Task<ValidationsComplete> Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
         {
             var flights = await _store.Get();

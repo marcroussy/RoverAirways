@@ -26,7 +26,7 @@ namespace Flights
             _store = store;
         }
 
-        [FunctionName("Scheduler")]
+        [FunctionName(FunctionName.Scheduler)]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             [Blob("schemas/SchedulerSchema.json", FileAccess.Read)] Stream validationSchema,
@@ -66,17 +66,6 @@ namespace Flights
                 return (ActionResult)new InternalServerErrorObjectResult();
             }
 
-        }
-
-        private static bool IsValid(string requestBody)
-        {
-            JObject jo = JObject.Parse(requestBody);
-            return (jo["scheduled"] != null ||
-                    jo["revised"] != null ||
-                    jo["id"] != null ||
-                    jo["departing"] != null ||
-                    jo["arriving"] != null ||
-                    jo["equipment"] != null);
         }
     }
 }
