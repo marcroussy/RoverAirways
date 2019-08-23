@@ -19,18 +19,18 @@ namespace Flights
 {
     public class Scheduler
     {
-        private readonly FlightStore _store = new FlightStore();
+        private readonly IFlightStore _store;
 
-        public Scheduler(FlightStore store)
+        public Scheduler(IFlightStore store)
         {
             _store = store;
         }
 
-        [FunctionName("Scheduler")]
+        [FunctionName(FunctionName.Scheduler)]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-            [Blob("schemas/SchedulerSchema.json", FileAccess.Read)] Stream validationSchema,
-            [Queue("flightscheduled")]ICollector<Flight> queueCollector,
+            [HttpTrigger(AuthorizationLevel.Function, HttpTriggerMethod.Post, Route = null)] HttpRequest req,
+            [Blob(BindingParameter.SchedulerBlobSchema, FileAccess.Read)] Stream validationSchema,
+            [Queue(BindingParameter.ScheduledFlightQueue)]ICollector<Flight> queueCollector,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
@@ -57,26 +57,15 @@ namespace Flights
 
                 queueCollector.Add(flight);
 
-                return (ActionResult)new OkObjectResult(flight);
+                return new OkObjectResult(flight);
             }
             catch (Exception ex)
             {
                 log.LogError(ex.Message);
 
-                return (ActionResult)new InternalServerErrorObjectResult();
+                return new InternalServerErrorObjectResult();
             }
 
-        }
-
-        private static bool IsValid(string requestBody)
-        {
-            JObject jo = JObject.Parse(requestBody);
-            return (jo["scheduled"] != null ||
-                    jo["revised"] != null ||
-                    jo["id"] != null ||
-                    jo["departing"] != null ||
-                    jo["arriving"] != null ||
-                    jo["equipment"] != null);
         }
     }
 }

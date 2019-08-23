@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Common;
-using Flights.Services;
 using Flights.Store;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
@@ -12,46 +11,57 @@ using Microsoft.Extensions.Logging;
 
 namespace Flights
 {
-    [StorageAccount("AzureWebJobsStorage")]
+    [StorageAccount(ConfigurationSetting.AzureWebJobsStorage)]
     public class Validator
     {
         private readonly IFlightStore _store;
-        private readonly IWarningGenerator _warnings;
-        public Validator(IFlightStore store, IWarningGenerator warnings)
+
+        public Validator(IFlightStore store)
         {
             _store = store;
-            _warnings = warnings;
         }
 
-        [return: Queue("validationscompleted")]
-        [FunctionName("Validator")]
-        public async Task<ValidationsComplete> Run([TimerTrigger("0 */1 * * * *")]TimerInfo myTimer, ILogger log)
+        [return: Queue(BindingParameter.ValidationCompletedQueue)]
+        [FunctionName(FunctionName.Validator)]
+        public async Task<ValidationsComplete> Run([TimerTrigger(BindingParameter.ValidationTimer)]TimerInfo myTimer, ILogger log)
         {
             var flights = await _store.Get();
 
             if (flights.IsEmpty)
             {
-                log.LogInformation($"No flights scheduled.");
+                log.LogInformation($"No flights to validate.");
+                return null;
             }
+
+            var validFlights = new List<int>();
+            var invalidFlights = new List<int>();
 
             foreach (var flight in flights)
             {
                 if (flight.Revised <= flight.Scheduled)
                 {
-                    _warnings.Send();        
+                    invalidFlights.Add(flight.FlightNo);
                 }
-                log.LogInformation($"Flight {flight.Id} is valid.");
+                if (flight.Departing == flight.Arriving)
+                {
+                    invalidFlights.Add(flight.FlightNo);
+                }
+
+                if (invalidFlights.IndexOf(flight.FlightNo) == 0)
+                {
+                    validFlights.Add(flight.FlightNo);
+                }
             }
 
-            return new ValidationsComplete() {FlightIds = flights.Select(f => f.Id).ToList() , Succesful = true  } ;
+            return new ValidationsComplete() { ValidFlightIds = validFlights, InvalidFlightIds = invalidFlights };
         }
 
 
 
         public class ValidationsComplete
         {
-            public bool Succesful { get; set; }
-            public IEnumerable<int> FlightIds { get; set; }
+            public IEnumerable<int> ValidFlightIds { get; set; }
+            public IEnumerable<int> InvalidFlightIds { get; set; }
         }
     }
 }
