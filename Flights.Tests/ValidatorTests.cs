@@ -10,13 +10,14 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Linq;
+using Flights.Validator;
 
 namespace Flights.Tests
 {
     [TestClass]
     public class ValidatorTests
     {
-        private Validator _sut;
+        private ValidatorFunction _sut;
         private Mock<IFlightStore> _mockStore;
         private Mock<ILogger> _mockLogger;
 
@@ -31,7 +32,7 @@ namespace Flights.Tests
         {
             _mockStore = new Mock<IFlightStore>();
             _mockLogger = new Mock<ILogger>();
-            _sut = new Validator(_mockStore.Object);
+            _sut = new ValidatorFunction(_mockStore.Object);
         }
 
         [TestMethod]

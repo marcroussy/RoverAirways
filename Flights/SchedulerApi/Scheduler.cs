@@ -15,13 +15,13 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System.Collections.Generic;
 
-namespace Flights
+namespace Flights.Scheduler
 {
-    public class Scheduler
+    public class SchedulerFunction
     {
         private readonly IFlightStore _store;
 
-        public Scheduler(IFlightStore store)
+        public SchedulerFunction(IFlightStore store)
         {
             _store = store;
         }

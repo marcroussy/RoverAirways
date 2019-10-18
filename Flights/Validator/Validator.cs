@@ -9,14 +9,14 @@ using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
-namespace Flights
+namespace Flights.Validator
 {
     [StorageAccount(ConfigurationSetting.AzureWebJobsStorage)]
-    public class Validator
+    public class ValidatorFunction
     {
         private readonly IFlightStore _store;
 
-        public Validator(IFlightStore store)
+        public ValidatorFunction(IFlightStore store)
         {
             _store = store;
         }
