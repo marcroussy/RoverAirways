@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System.Collections.Generic;
 using Common.Entities;
+using System.Linq;
 
 namespace Flights.HttpApis
 {
@@ -33,6 +34,22 @@ namespace Flights.HttpApis
         {
             var list = await _store.Get();
             return new OkObjectResult(list);
+        }
+
+        [FunctionName(HttpApiFunctions.GetFlight)]
+        public async Task<IActionResult> GetFlight(
+            [HttpTrigger(AuthorizationLevel.Function, HttpTriggerMethod.Get, Route = null)] HttpRequest req)
+        {
+            var list = await _store.Get();
+            var matched = list.FirstOrDefault(f => f.FlightNo == req.Query["flightId"]);
+            if (matched != null)
+            {
+                return new OkObjectResult(list);
+            }
+            else
+            {
+                return new BadRequestObjectResult("Flight can't be found");
+            }
         }
 
         [FunctionName(HttpApiFunctions.CreateFlight)]

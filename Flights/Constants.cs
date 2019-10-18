@@ -8,6 +8,7 @@ namespace Flights
     {
         public const string CreateFlight = "Scheduler";
         public const string GetFlights = "GetFlights";
+        public const string GetFlight = "GetFlight";
     }
 
     public static class WorkerFunctions
