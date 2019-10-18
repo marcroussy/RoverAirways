@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Text;
 using System.Threading.Tasks;
 using Common;
+using Common.Entities;
 
 namespace Flights.Store
 {

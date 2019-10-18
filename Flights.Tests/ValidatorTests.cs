@@ -11,6 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Linq;
 using Flights.Validator;
+using Common.Entities;
 
 namespace Flights.Tests
 {
