@@ -40,11 +40,19 @@ namespace Flights.HttpApis
         public async Task<IActionResult> GetFlight(
             [HttpTrigger(AuthorizationLevel.Function, HttpTriggerMethod.Get, Route = null)] HttpRequest req)
         {
+            var unsanitizedflightId = req.Query["flightId"];
+            var validFlightId = int.TryParse(unsanitizedflightId, out var flightId);
+
+            if (!validFlightId)
+            {
+                return new BadRequestObjectResult("Invalid flight id");
+            }
+
             var list = await _store.Get();
-            var matched = list.FirstOrDefault(f => f.FlightNo == req.Query["flightId"]);
+            var matched = list.FirstOrDefault(f => f.FlightNo == flightId);
             if (matched != null)
             {
-                return new OkObjectResult(list);
+                return new OkObjectResult(matched);
             }
             else
             {
