@@ -33,5 +33,5 @@ steps:
   displayName: Unit Test
   inputs:
     command: 'test'
-    projects: '**/*tests.dll;!**/obj/**'
+    projects: '**/*tests.dll !**/obj/**'
     testRunTitle: 'Unit Tests'
