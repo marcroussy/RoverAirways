@@ -34,6 +34,6 @@ steps:
   inputs:
     command: 'test'
     projects: |
-      **/*tests.dll'
+      '**/*tests.dll'
       '!**/obj/**'
     testRunTitle: 'Unit Tests'
