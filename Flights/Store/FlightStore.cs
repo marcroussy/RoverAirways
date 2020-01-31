@@ -1,4 +1,5 @@
 ﻿using Common;
+using Common.Entities;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;

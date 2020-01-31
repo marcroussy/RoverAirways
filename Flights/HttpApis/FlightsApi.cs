@@ -14,20 +14,54 @@ using Common.HttpHelpers;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Schema;
 using System.Collections.Generic;
+using Common.Entities;
+using System.Linq;
 
-namespace Flights.Scheduler
+namespace Flights.HttpApis
 {
-    public class SchedulerFunction
+    public class FlightsApi
     {
         private readonly IFlightStore _store;
 
-        public SchedulerFunction(IFlightStore store)
+        public FlightsApi(IFlightStore store)
         {
             _store = store;
         }
 
-        [FunctionName(FunctionName.Scheduler)]
-        public async Task<IActionResult> Run(
+        [FunctionName(HttpApiFunctions.GetFlights)]
+        public async Task<IActionResult> GetFlights(
+            [HttpTrigger(AuthorizationLevel.Function, HttpTriggerMethod.Get, Route = null)] HttpRequest req)
+        {
+            var list = await _store.Get();
+            return new OkObjectResult(list);
+        }
+
+        [FunctionName(HttpApiFunctions.GetFlight)]
+        public async Task<IActionResult> GetFlight(
+            [HttpTrigger(AuthorizationLevel.Function, HttpTriggerMethod.Get, Route = null)] HttpRequest req)
+        {
+            var unsanitizedflightId = req.Query["flightId"];
+            var validFlightId = int.TryParse(unsanitizedflightId, out var flightId);
+
+            if (!validFlightId)
+            {
+                return new BadRequestObjectResult("Invalid flight id");
+            }
+
+            var list = await _store.Get();
+            var matched = list.FirstOrDefault(f => f.FlightNo == flightId);
+            if (matched != null)
+            {
+                return new OkObjectResult(matched);
+            }
+            else
+            {
+                return new BadRequestObjectResult("Flight can't be found");
+            }
+        }
+
+        [FunctionName(HttpApiFunctions.CreateFlight)]
+        public async Task<IActionResult> CreateFlight(
             [HttpTrigger(AuthorizationLevel.Function, HttpTriggerMethod.Post, Route = null)] HttpRequest req,
             [Blob(BindingParameter.SchedulerBlobSchema, FileAccess.Read)] Stream validationSchema,
             [Queue(BindingParameter.ScheduledFlightQueue)]ICollector<Flight> queueCollector,

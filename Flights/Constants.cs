@@ -4,10 +4,16 @@ using System.Text;
 
 namespace Flights
 {
-    public static class FunctionName
+    public static class HttpApiFunctions
+    {
+        public const string CreateFlight = "Scheduler";
+        public const string GetFlights = "GetFlights";
+        public const string GetFlight = "GetFlight";
+    }
+
+    public static class WorkerFunctions
     {
         public const string Validator = "Validator";
-        public const string Scheduler = "Scheduler";
     }
 
     public static class ConfigurationSetting

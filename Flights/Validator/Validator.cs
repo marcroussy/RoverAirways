@@ -22,7 +22,7 @@ namespace Flights.Validator
         }
 
         [return: Queue(BindingParameter.ValidationCompletedQueue)]
-        [FunctionName(FunctionName.Validator)]
+        [FunctionName(WorkerFunctions.Validator)]
         public async Task<ValidationsComplete> Run([TimerTrigger(BindingParameter.ValidationTimer)]TimerInfo myTimer, ILogger log)
         {
             var flights = await _store.Get();
