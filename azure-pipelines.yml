@@ -31,5 +31,5 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'test'
-    projects: '**/*test*.dll'
+    projects: '**/bin/*tests.dll'
     testRunTitle: 'Unit Tests'
