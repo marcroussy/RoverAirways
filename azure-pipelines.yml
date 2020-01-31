@@ -27,7 +27,6 @@ steps:
   inputs:
     command: build
     projects: '**/*.csproj'
-    'anothervalue'
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
@@ -35,6 +34,6 @@ steps:
   inputs:
     command: 'test'
     projects: |
-      '**/*tests.dll'
+      **/*tests.dll'
       '!**/obj/**'
     testRunTitle: 'Unit Tests'
