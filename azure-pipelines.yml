@@ -5,6 +5,7 @@
 
 trigger:
 - master
+- feature/*
 
 pool:
   name: 'Default'
@@ -15,19 +16,14 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
-  displayName: NuGet Restore
-  inputs:
-    restoreSolution: '$(solution)'
 
 - task: DotNetCoreCLI@2
   displayName: Build
   inputs:
     command: build
-    projects: '**/*.csproj'
-    arguments: '--configuration $(buildConfiguration)'
+    projects: |
+      $(workingDirectory)/*.csproj
+    arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
 
 - task: DotNetCoreCLI@2
   displayName: Unit Test
