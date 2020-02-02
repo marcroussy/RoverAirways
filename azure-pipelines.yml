@@ -5,12 +5,13 @@
 
 trigger:
 - master
-- feature/*
 
 pool:
   name: 'Default'
 
 variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
@@ -22,23 +23,3 @@ steps:
     projects: |
       **/*tests.dll
     testRunTitle: 'Unit Tests'
-
-- task: DotNetCoreCLI@2
-  displayName: Build
-  inputs:
-    command: build
-    projects: |
-      $(workingDirectory)/*.csproj
-    arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
-
-- task: ArchiveFiles@2
-  displayName: 'Archive files'
-  inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
-    includeRootFolder: false
-    archiveType: zip
-    archiveFile: $(Build.ArtifactStagingDirectory)/Flights.zip
-    replaceExistingArchive: true
-
-- publish: $(Build.ArtifactStagingDirectory)/Flights.zip
-  artifact: drop
