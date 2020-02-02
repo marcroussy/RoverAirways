@@ -11,11 +11,17 @@ pool:
   name: 'Default'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
+
+- task: DotNetCoreCLI@2
+  displayName: Unit Test
+  inputs:
+    command: 'test'
+    projects: |
+      **/*tests.dll
+    testRunTitle: 'Unit Tests'
 
 - task: DotNetCoreCLI@2
   displayName: Build
@@ -25,11 +31,14 @@ steps:
       $(workingDirectory)/*.csproj
     arguments: --output $(System.DefaultWorkingDirectory)/publish_output --configuration Release
 
-- task: DotNetCoreCLI@2
-  displayName: Unit Test
+- task: ArchiveFiles@2
+  displayName: 'Archive files'
   inputs:
-    command: 'test'
-    projects: |
-      **/*tests.dll
-      !**/obj/**
-    testRunTitle: 'Unit Tests'
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)/publish_output'
+    includeRootFolder: false
+    archiveType: zip
+    archiveFile: $(Build.ArtifactStagingDirectory)/Flights.zip
+    replaceExistingArchive: true
+
+- publish: $(Build.ArtifactStagingDirectory)/Flights.zip
+  artifact: drop
