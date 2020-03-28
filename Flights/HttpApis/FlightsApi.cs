@@ -16,6 +16,7 @@ using Newtonsoft.Json.Schema;
 using System.Collections.Generic;
 using Common.Entities;
 using System.Linq;
+using System.Net;
 
 namespace Flights.HttpApis
 {
@@ -42,10 +43,12 @@ namespace Flights.HttpApis
         {
             var unsanitizedflightId = req.Query["flightId"];
             var validFlightId = int.TryParse(unsanitizedflightId, out var flightId);
-
             if (!validFlightId)
             {
-                return new BadRequestObjectResult("Invalid flight id");
+                return ErrorResponder.CreateResponse(
+                    HttpStatusCode.BadRequest,
+                    type: "/invalid-flightid",
+                    instance: $"/flight/{unsanitizedflightId}");
             }
 
             var list = await _store.Get();
@@ -56,7 +59,10 @@ namespace Flights.HttpApis
             }
             else
             {
-                return new BadRequestObjectResult("Flight can't be found");
+                return ErrorResponder.CreateResponse(
+                    HttpStatusCode.NotFound,
+                    type: "/invalid-flightid",
+                    instance: $"/flight/{unsanitizedflightId}");
             }
         }
 
@@ -67,7 +73,7 @@ namespace Flights.HttpApis
             [Queue(BindingParameter.ScheduledFlightQueue)]ICollector<Flight> queueCollector,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("CreateFlight processing a request.");
 
             try
             {
@@ -82,7 +88,10 @@ namespace Flights.HttpApis
 
                 if (!validRequest)
                 {
-                    return new BadRequestObjectResult(errorMessages);
+                    return ErrorResponder.CreateResponse(
+                        HttpStatusCode.BadRequest, 
+                        "/invalid-request", 
+                        detail: errorMessages.Aggregate((i, j) => i + ", " + j));
                 }
 
                 var flight = parsedRequest.ToObject<Flight>();
@@ -97,7 +106,10 @@ namespace Flights.HttpApis
             {
                 log.LogError(ex.Message);
 
-                return new InternalServerErrorObjectResult();
+                return ErrorResponder.CreateResponse(
+                    HttpStatusCode.InternalServerError, 
+                    "/unknown-error",
+                    detail: ex.Message);
             }
 
         }
