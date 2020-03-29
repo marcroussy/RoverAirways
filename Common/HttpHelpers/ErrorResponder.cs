@@ -17,7 +17,7 @@ namespace Common.HttpHelpers
         {
             var problem = new ProblemDetails()
             {
-                Status = (long)statusCode,
+                Status = (int)statusCode,
                 Type = type,
                 Title = title,
                 Instance = instance,
