@@ -45,10 +45,7 @@ namespace Flights.HttpApis
             var validFlightId = int.TryParse(unsanitizedflightId, out var flightId);
             if (!validFlightId)
             {
-                return ErrorResponder.CreateResponse(
-                    HttpStatusCode.BadRequest,
-                    type: "/invalid-flightid",
-                    instance: $"/flight/{unsanitizedflightId}");
+                return ErrorResponse.BadRequest(type: "/invalid-flightid", instance: $"/flight/{unsanitizedflightId}");
             }
 
             var list = await _store.Get();
@@ -59,10 +56,7 @@ namespace Flights.HttpApis
             }
             else
             {
-                return ErrorResponder.CreateResponse(
-                    HttpStatusCode.NotFound,
-                    type: "/invalid-flightid",
-                    instance: $"/flight/{unsanitizedflightId}");
+                return ErrorResponse.NotFound(type: "/invalid-flightid", instance: $"/flight/{unsanitizedflightId}");
             }
         }
 
@@ -88,10 +82,7 @@ namespace Flights.HttpApis
 
                 if (!validRequest)
                 {
-                    return ErrorResponder.CreateResponse(
-                        HttpStatusCode.BadRequest, 
-                        "/invalid-request", 
-                        detail: errorMessages.Aggregate((i, j) => i + ", " + j));
+                    return ErrorResponse.BadRequest(type: "/invalid-request", detail: errorMessages.Aggregate((i, j) => i + ", " + j));
                 }
 
                 var flight = parsedRequest.ToObject<Flight>();
@@ -106,10 +97,7 @@ namespace Flights.HttpApis
             {
                 log.LogError(ex.Message);
 
-                return ErrorResponder.CreateResponse(
-                    HttpStatusCode.InternalServerError, 
-                    "/unknown-error",
-                    detail: ex.Message);
+                return ErrorResponse.InternalServerError(detail: ex.Message);
             }
 
         }
