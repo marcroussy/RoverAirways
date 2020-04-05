@@ -24,7 +24,7 @@ namespace Common.HttpHelpers
                 Detail = detail
             };
 
-            return new ProblemObjectResult(problem, statusCode);
+            return new ProblemObjectResult(problem);
         }
 
         public static ObjectResult BadRequest(

@@ -8,10 +8,9 @@ namespace Common.HttpHelpers
 {
     public class ProblemObjectResult : ObjectResult
     {
-        public ProblemObjectResult(object value, HttpStatusCode statusCode) : base(value)
+        public ProblemObjectResult(ProblemDetails value) : base(value)
         {
-            StatusCode = (int)statusCode;
+            StatusCode = (int)value.Status;
         }
-
     }
 }
